@@ -1,0 +1,14 @@
+{
+  "name": "file-server",
+  "version": "1.0.0",
+  "description": "Personal cloud file server with web and app access",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "multer": "1.4.4-lts.1"
+  }
+}

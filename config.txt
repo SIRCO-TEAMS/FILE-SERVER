@@ -1,0 +1,37 @@
+# Server port
+PORT=3000
+
+# Hard storage limit for all users combined (supports KB, MB, GB, TB, PB)
+HARD_LIMIT=50GB
+
+# Enable or disable access via the Python app
+ENABLE_APP=true
+
+# Enable or disable access via the web browser
+ENABLE_WEB=true
+
+# Directory where user files are stored
+STORAGE_DIR=storage
+
+# Path to users file
+USERS_PATH=users.txt
+
+# Maximum file size allowed per upload (supports KB, MB, GB, TB, PB)
+MAX_FILE_SIZE=1GB
+
+# Path to log file (optional)
+LOG_PATH=server.log
+
+# Session timeout in minutes (for web/app sessions)
+SESSION_TIMEOUT=60
+
+# Allow file overwrite on upload (true/false)
+ALLOW_OVERWRITE=true
+
+# Allow file deletion by users (true/false)
+ALLOW_DELETE=true
+
+# Reserved usernames (comma-separated, cannot be used)
+RESERVED_USERNAMES=admin,root,system
+
+# Add other settings as needed

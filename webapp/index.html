@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>File Server Web App</title>
+    <style>
+        body { font-family: Arial; margin: 2em; }
+        #login, #main { max-width: 400px; margin: auto; }
+        #main { display: none; }
+        ul { padding: 0; }
+        li { list-style: none; margin: 0.5em 0; }
+    </style>
+</head>
+<body>
+<div id="login">
+    <h2>Login</h2>
+    <input id="username" placeholder="Username"><br>
+    <input id="password" type="password" placeholder="Password"><br>
+    <button onclick="login()">Login</button>
+    <div id="login-msg" style="color:red"></div>
+</div>
+<div id="main">
+    <h2>File Manager</h2>
+    <button onclick="showUpload()">Upload File</button>
+    <button onclick="listFiles()">Refresh</button>
+    <input type="file" id="file-input" style="display:none" onchange="uploadFile()">
+    <ul id="file-list"></ul>
+    <button onclick="logout()">Logout</button>
+    <div id="main-msg" style="color:red"></div>
+</div>
+<script>
+let username = '', password = '';
+
+function login() {
+    username = document.getElementById('username').value;
+    password = document.getElementById('password').value;
+    fetch('/files', {
+        headers: { username, password }
+    }).then(r => {
+        if (r.ok) {
+            document.getElementById('login').style.display = 'none';
+            document.getElementById('main').style.display = '';
+            listFiles();
+        } else {
+            document.getElementById('login-msg').innerText = 'Login failed';
+        }
+    });
+}
+
+function logout() {
+    username = '';
+    password = '';
+    document.getElementById('main').style.display = 'none';
+    document.getElementById('login').style.display = '';
+    document.getElementById('login-msg').innerText = '';
+}
+
+function showUpload() {
+    document.getElementById('file-input').click();
+}
+
+function uploadFile() {
+    const file = document.getElementById('file-input').files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('file', file);
+    fetch('/upload', {
+        method: 'POST',
+        headers: { username, password },
+        body: formData
+    }).then(r => r.text()).then(msg => {
+        if (msg === 'File uploaded') {
+            listFiles();
+        } else {
+            document.getElementById('main-msg').innerText = msg;
+        }
+    });
+}
+
+function listFiles() {
+    fetch('/files', {
+        headers: { username, password }
+    }).then(r => r.json()).then(files => {
+        const ul = document.getElementById('file-list');
+        ul.innerHTML = '';
+        files.forEach(f => {
+            const li = document.createElement('li');
+            li.innerHTML = `<a href="/download/${encodeURIComponent(f)}" onclick="return downloadFile('${f}')">${f}</a>`;
+            ul.appendChild(li);
+        });
+    });
+}
+
+function downloadFile(fname) {
+    fetch(`/download/${encodeURIComponent(fname)}`, {
+        headers: { username, password }
+    }).then(r => {
+        if (!r.ok) return r.text().then(msg => { document.getElementById('main-msg').innerText = msg; });
+        return r.blob().then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fname;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        });
+    });
+    return false;
+}
+</script>
+</body>
+</html>
