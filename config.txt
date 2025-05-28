@@ -17,7 +17,7 @@ STORAGE_DIR=storage
 USERS_PATH=users.txt
 
 # Maximum file size allowed per upload (supports KB, MB, GB, TB, PB)
-MAX_FILE_SIZE=1GB
+MAX_FILE_SIZE=20GB
 
 # Path to log file (optional)
 LOG_PATH=server.log
